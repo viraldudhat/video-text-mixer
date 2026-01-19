@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Video Text Mixer 1.0.0</title>
+    <link rel="stylesheet" href="style.css" />
+
+    <!-- Gujarati / Hindi Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+Gujarati&family=Noto+Sans+Devanagari&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <!-- TOP -->
+      <div class="top">
+        <!-- LEFT -->
+        <div class="left">
+          <h3>Paste Paragraph</h3>
+
+          <textarea id="paragraph" placeholder="અહીં લખો / यहाँ लिखें"> </textarea>
+        </div>
+
+        <!-- RIGHT -->
+        <div class="right">
+          <h3>Lines</h3>
+          <div id="lines"></div>
+        </div>
+      </div>
+
+      <!-- BOTTOM -->
+      <div class="bottom">
+        <div class="preview-section">
+          <h3>Preview (Capture in OBS)</h3>
+          <div class="center-btn">
+            <button id="loadBtn">Load Lines</button>
+          </div>
+        </div>
+
+        <div class="controls">
+          <label>Font Size</label>
+          <input type="range" id="fontSize" min="16" max="120" value="40" />
+
+          <label>Typing Speed</label>
+          <input type="range" id="typeSpeed" min="0" max="400" value="40" />
+          <span id="speedValue">40</span>
+
+          <label>Font Color</label>
+          <input type="color" id="fontColor" value="#ffffff" />
+
+          <label>Background</label>
+          <input type="color" id="bgColor" value="#000000" />
+
+          <label>Font</label>
+          <select id="fontFamily">
+            <option value="Noto Sans Gujarati">Gujarati</option>
+            <option value="Noto Sans Devanagari">Hindi</option>
+            <option value="Arial">English</option>
+          </select>
+
+          <button id="savePreset">Save</button>
+        </div>
+
+        <div id="preview">Selected line will appear here</div>
+      </div>
+    </div>
+
+    <script src="renderer.js"></script>
+  </body>
+</html>
