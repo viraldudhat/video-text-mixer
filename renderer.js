@@ -7,6 +7,7 @@ const previewEl = document.getElementById('preview');
 const fontSizeEl = document.getElementById('fontSize');
 const fontColorEl = document.getElementById('fontColor');
 const bgColorEl = document.getElementById('bgColor');
+const fontSizeValueEl = document.getElementById('fontSizeValue');
 
 const savePresetBtn = document.getElementById('savePreset');
 
@@ -18,6 +19,11 @@ const saveBtn = document.getElementById('saveBtn');
 const scriptSelect = document.getElementById('scriptSelect');
 const savedList = document.getElementById('savedList');
 const deleteBtn = document.getElementById('deleteBtn');
+
+const boldBtn = document.getElementById('boldBtn');
+const italicBtn = document.getElementById('italicBtn');
+const underlineBtn = document.getElementById('underlineBtn');
+
 // ---------- STATE ----------
 let lines = [];
 let activeIndex = -1;
@@ -25,6 +31,10 @@ let activeIndex = -1;
 // Typewriter variables
 let typingTimer = null; // <-- THIS IS REQUIRED
 let TYPE_SPEED = 40; // ms per character, adjust as needed
+
+let isBold = false;
+let isItalic = false;
+let isUnderline = false;
 // ---------- LOAD LINES ----------
 loadBtn.addEventListener('click', () => {
   lines = paragraphEl.value
@@ -107,6 +117,11 @@ function applyPreviewStyle() {
   previewEl.style.fontSize = fontSizeEl.value + 'px';
   previewEl.style.color = fontColorEl.value;
   previewEl.style.background = bgColorEl.value;
+  fontSizeValueEl.textContent = fontSizeEl.value;
+
+  previewEl.style.fontWeight = isBold ? 'bold' : 'normal';
+  previewEl.style.fontStyle = isItalic ? 'italic' : 'normal';
+  previewEl.style.textDecoration = isUnderline ? 'underline' : 'none';
 }
 
 // Live update
@@ -130,6 +145,7 @@ window.addEventListener('DOMContentLoaded', () => {
     fontSizeEl.value = preset.fontSize;
     fontColorEl.value = preset.fontColor;
     bgColorEl.value = preset.bgColor;
+    fontSizeValueEl.textContent = preset.fontSize;
 
     if (preset.typeSpeed) {
       TYPE_SPEED = preset.typeSpeed;
@@ -270,4 +286,25 @@ deleteBtn.addEventListener('click', () => {
   previewEl.innerText = '';
 
   loadScriptDropdown();
+});
+
+// BOLD
+boldBtn.addEventListener('click', () => {
+  isBold = !isBold;
+  boldBtn.classList.toggle('active', isBold);
+  applyPreviewStyle();
+});
+
+// ITALIC
+italicBtn.addEventListener('click', () => {
+  isItalic = !isItalic;
+  italicBtn.classList.toggle('active', isItalic);
+  applyPreviewStyle();
+});
+
+// UNDERLINE
+underlineBtn.addEventListener('click', () => {
+  isUnderline = !isUnderline;
+  underlineBtn.classList.toggle('active', isUnderline);
+  applyPreviewStyle();
 });

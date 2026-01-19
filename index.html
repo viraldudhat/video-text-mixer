@@ -19,7 +19,7 @@
         <!-- LEFT -->
         <div class="left">
           <h3>Paste Paragraph</h3>
-          <input id="titleInput" placeholder="Enter title (eg: Morning Sabha)" />
+          <input id="titleInput" placeholder="Enter title (eg: Sabha)" />
 
           <textarea id="paragraph" placeholder="અહીં લખો / यहाँ लिखें"></textarea>
 
@@ -46,16 +46,13 @@
 
       <!-- BOTTOM -->
       <div class="bottom">
-        <div class="preview-section">
-          <h3>Preview (Capture in OBS)</h3>
-        </div>
-
         <!-- CONTROLS -->
         <div class="controls">
           <label>Font Size</label>
           <input type="range" id="fontSize" min="16" max="120" value="40" />
+          <span id="fontSizeValue">40</span>
 
-          <label>Typing Speed</label>
+          <label>Speed</label>
           <input type="range" id="typeSpeed" min="0" max="400" value="40" />
           <span id="speedValue">40</span>
 
@@ -64,6 +61,11 @@
 
           <label>Background</label>
           <input type="color" id="bgColor" value="#000000" />
+
+          <!-- TEXT FORMAT -->
+          <button id="boldBtn"><b>B</b></button>
+          <button id="italicBtn"><i>I</i></button>
+          <button id="underlineBtn"><u>U</u></button>
 
           <button id="savePreset">Save</button>
         </div>
