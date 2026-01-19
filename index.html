@@ -11,6 +11,7 @@
       rel="stylesheet"
     />
   </head>
+
   <body>
     <div class="container">
       <!-- TOP -->
@@ -18,13 +19,27 @@
         <!-- LEFT -->
         <div class="left">
           <h3>Paste Paragraph</h3>
+          <input id="titleInput" placeholder="Enter title (eg: Morning Sabha)" />
 
-          <textarea id="paragraph" placeholder="અહીં લખો / यहाँ लिखें"> </textarea>
+          <textarea id="paragraph" placeholder="અહીં લખો / यहाँ लिखें"></textarea>
+
+          <div class="left-paste-btn">
+            <button id="saveBtn">Save Script</button>
+            <button id="loadBtn">Load Lines</button>
+          </div>
         </div>
 
         <!-- RIGHT -->
         <div class="right">
-          <h3>Lines</h3>
+          <h3>Select Saved Script</h3>
+          <div class="center-btn">
+            <select id="scriptSelect">
+              <option value="">-- Select Script --</option>
+            </select>
+            <button id="deleteBtn">Delete Selected</button>
+          </div>
+
+          <div id="savedList"></div>
           <div id="lines"></div>
         </div>
       </div>
@@ -33,11 +48,9 @@
       <div class="bottom">
         <div class="preview-section">
           <h3>Preview (Capture in OBS)</h3>
-          <div class="center-btn">
-            <button id="loadBtn">Load Lines</button>
-          </div>
         </div>
 
+        <!-- CONTROLS -->
         <div class="controls">
           <label>Font Size</label>
           <input type="range" id="fontSize" min="16" max="120" value="40" />
@@ -62,6 +75,7 @@
           <button id="savePreset">Save</button>
         </div>
 
+        <!-- PREVIEW -->
         <div id="preview">Selected line will appear here</div>
       </div>
     </div>

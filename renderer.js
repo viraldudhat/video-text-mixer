@@ -13,6 +13,11 @@ const savePresetBtn = document.getElementById('savePreset');
 const typeSpeedEl = document.getElementById('typeSpeed');
 const speedValueEl = document.getElementById('speedValue');
 
+const titleInput = document.getElementById('titleInput');
+const saveBtn = document.getElementById('saveBtn');
+const scriptSelect = document.getElementById('scriptSelect');
+const savedList = document.getElementById('savedList');
+const deleteBtn = document.getElementById('deleteBtn');
 // ---------- STATE ----------
 let lines = [];
 let activeIndex = -1;
@@ -135,6 +140,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     applyPreviewStyle();
+    loadScriptDropdown();
     console.log('✅ Preset auto-loaded');
   } catch (err) {
     console.error('❌ Preset load failed', err);
@@ -162,6 +168,32 @@ savePresetBtn.addEventListener('click', () => {
   console.log('✅ Preset saved:', preset);
 });
 
+saveBtn.addEventListener('click', () => {
+  const title = titleInput.value.trim();
+  const content = paragraphEl.value.trim();
+
+  if (!title || !content) {
+    alert('Title and content required');
+    return;
+  }
+
+  const scripts = getScripts();
+  scripts[title] = content;
+  saveScripts(scripts);
+
+  titleInput.value = '';
+  loadScriptDropdown();
+});
+
+scriptSelect.addEventListener('change', () => {
+  const title = scriptSelect.value;
+  if (!title) return;
+
+  const scripts = getScripts();
+  paragraphEl.value = scripts[title];
+  titleInput.value = title;
+  loadBtn.click(); // auto load lines
+});
 function startTypewriter(text) {
   if (typingTimer) clearInterval(typingTimer);
 
@@ -180,3 +212,64 @@ function startTypewriter(text) {
     }
   }, TYPE_SPEED);
 }
+
+function getScripts() {
+  return JSON.parse(localStorage.getItem('scripts') || '{}');
+}
+
+function saveScripts(data) {
+  localStorage.setItem('scripts', JSON.stringify(data));
+}
+
+function loadSavedList(filter = '') {
+  const scripts = getScripts();
+  savedList.innerHTML = '';
+
+  Object.keys(scripts)
+    .filter((title) => title.toLowerCase().includes(filter.toLowerCase()))
+    .forEach((title) => {
+      const div = document.createElement('div');
+      div.className = 'saved-item';
+      div.innerText = title;
+
+      div.onclick = () => {
+        paragraphEl.value = scripts[title];
+        loadBtn.click(); // auto load lines
+      };
+
+      savedList.appendChild(div);
+    });
+}
+
+function loadScriptDropdown() {
+  const scripts = getScripts();
+
+  scriptSelect.innerHTML = '<option value="">-- Select Script --</option>';
+
+  Object.keys(scripts).forEach((title) => {
+    const option = document.createElement('option');
+    option.value = title;
+    option.textContent = title;
+    scriptSelect.appendChild(option);
+  });
+}
+
+// DELETE SCRIPT
+deleteBtn.addEventListener('click', () => {
+  const title = scriptSelect.value;
+  if (!title) return alert('Select a script first');
+
+  if (!confirm(`Delete "${title}"?`)) return;
+
+  const scripts = getScripts();
+  delete scripts[title];
+  saveScripts(scripts);
+
+  localStorage.removeItem('lastScript');
+  scriptSelect.value = '';
+  paragraphEl.value = '';
+  linesEl.innerHTML = '';
+  previewEl.innerText = '';
+
+  loadScriptDropdown();
+});
