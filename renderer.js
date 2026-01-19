@@ -7,7 +7,7 @@ const previewEl = document.getElementById('preview');
 const fontSizeEl = document.getElementById('fontSize');
 const fontColorEl = document.getElementById('fontColor');
 const bgColorEl = document.getElementById('bgColor');
-const fontFamilyEl = document.getElementById('fontFamily');
+
 const savePresetBtn = document.getElementById('savePreset');
 
 const typeSpeedEl = document.getElementById('typeSpeed');
@@ -107,14 +107,13 @@ function applyPreviewStyle() {
   previewEl.style.fontSize = fontSizeEl.value + 'px';
   previewEl.style.color = fontColorEl.value;
   previewEl.style.background = bgColorEl.value;
-  previewEl.style.fontFamily = fontFamilyEl.value;
 }
 
 // Live update
 fontSizeEl.addEventListener('input', applyPreviewStyle);
 fontColorEl.addEventListener('input', applyPreviewStyle);
 bgColorEl.addEventListener('input', applyPreviewStyle);
-fontFamilyEl.addEventListener('change', applyPreviewStyle);
+
 typeSpeedEl.addEventListener('input', () => {
   TYPE_SPEED = parseInt(typeSpeedEl.value, 10);
   speedValueEl.textContent = TYPE_SPEED;
@@ -131,7 +130,6 @@ window.addEventListener('DOMContentLoaded', () => {
     fontSizeEl.value = preset.fontSize;
     fontColorEl.value = preset.fontColor;
     bgColorEl.value = preset.bgColor;
-    fontFamilyEl.value = preset.fontFamily;
 
     if (preset.typeSpeed) {
       TYPE_SPEED = preset.typeSpeed;
@@ -153,7 +151,6 @@ savePresetBtn.addEventListener('click', () => {
     fontSize: fontSizeEl.value,
     fontColor: fontColorEl.value,
     bgColor: bgColorEl.value,
-    fontFamily: fontFamilyEl.value,
     typeSpeed: parseInt(typeSpeedEl.value, 10)
   };
 
@@ -182,6 +179,7 @@ saveBtn.addEventListener('click', () => {
   saveScripts(scripts);
 
   titleInput.value = '';
+  paragraphEl.value = '';
   loadScriptDropdown();
 });
 
