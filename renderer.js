@@ -339,9 +339,16 @@ underlineBtn.addEventListener('click', () => {
 });
 
 openPopupBtn.addEventListener('click', () => {
-  popupWindow = window.open('popup.html', 'OBSPreview', 'width=1920,height=1080');
+  const w = screen.width;
+  const h = screen.height;
+  popupWindow = window.open('popup.html', 'Preview', `width=${w},height=${h},left=0,top=0`);
   // Send data after popup loads
-  setTimeout(sendToPopup, 300);
+  setTimeout(() => {
+    popupWindow.moveTo(0, 0);
+    popupWindow.resizeTo(w, h);
+    popupWindow.focus();
+    sendToPopup();
+  }, 300);
 });
 bgImageInput.addEventListener('change', () => {
   const file = bgImageInput.files[0];
@@ -402,7 +409,7 @@ deleteBgBtn.addEventListener('click', () => {
     return;
   }
 
-  if (!confirm('Delete selected background image?')) return;
+  if (!confirm('Delete 🗑 selected background image?')) return;
 
   let images = JSON.parse(localStorage.getItem('bgImages') || '[]');
 

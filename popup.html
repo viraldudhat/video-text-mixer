@@ -10,17 +10,21 @@
     <style>
       body {
         margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
         overflow: hidden;
       }
       #stage {
-        width: 1920px;
-        height: 1080px;
+        width: 100vw;
+        height: 100vh;
         position: relative;
 
         background-color: #000;
         background-repeat: no-repeat;
         background-position: center center;
-        background-size: cover; /* FULL SCREEN */
+        background-size: contain; /* FULL SCREEN */
+        overflow: hidden;
       }
       #text {
         position: absolute;
