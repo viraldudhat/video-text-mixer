@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>OBS Preview</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+Gujarati&family=Noto+Sans+Devanagari&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+      }
+      #stage {
+        width: 1920px;
+        height: 1080px;
+        position: relative;
+
+        background-color: #000;
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-size: cover; /* FULL SCREEN */
+      }
+      #text {
+        position: absolute;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        white-space: pre-wrap;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="stage">
+      <div id="text"></div>
+    </div>
+
+    <script>
+      window.addEventListener('message', (e) => {
+        const d = e.data;
+        const text = document.getElementById('text');
+        const stage = document.getElementById('stage');
+
+        if (d.bgImage) stage.style.backgroundImage = `url(${d.bgImage})`;
+
+        Object.assign(text.style, {
+          fontSize: d.fontSize + 'px',
+          color: d.fontColor,
+          fontFamily: d.fontFamily,
+          fontWeight: d.bold ? 'bold' : 'normal',
+          fontStyle: d.italic ? 'italic' : 'normal',
+          textDecoration: d.underline ? 'underline' : 'none',
+          left: d.x + 'px',
+          top: d.y + 'px'
+        });
+
+        text.innerText = d.text;
+      });
+    </script>
+  </body>
+</html>

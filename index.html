@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>Video Text Mixer 1.0.0</title>
+    <title>Video Text Mixer 1.1.0</title>
     <link rel="stylesheet" href="style.css" />
 
     <!-- Gujarati / Hindi Fonts -->
@@ -66,8 +66,25 @@
           <button id="boldBtn"><b>B</b></button>
           <button id="italicBtn"><i>I</i></button>
           <button id="underlineBtn"><u>U</u></button>
-
+          <button id="openPopupBtn">🎬 Open 1080p Preview</button>
           <button id="savePreset">Save</button>
+        </div>
+        <div class="controls">
+          <label>Text X</label>
+          <input type="range" id="posX" min="0" max="1920" value="960" />
+          <span id="posXValue">960</span>
+
+          <label>Text Y</label>
+          <input type="range" id="posY" min="0" max="1080" value="540" />
+          <span id="posYValue">540</span>
+
+          <label>BG Image</label>
+          <input type="file" id="bgImageInput" accept="image/*" />
+
+          <select id="bgImageSelect">
+            <option value="">-- Saved Backgrounds --</option>
+          </select>
+          <button id="deleteBgBtn">🗑</button>
         </div>
 
         <!-- PREVIEW -->

@@ -24,17 +24,29 @@ const boldBtn = document.getElementById('boldBtn');
 const italicBtn = document.getElementById('italicBtn');
 const underlineBtn = document.getElementById('underlineBtn');
 
+const openPopupBtn = document.getElementById('openPopupBtn');
+const bgImageInput = document.getElementById('bgImageInput');
+const bgImageSelect = document.getElementById('bgImageSelect');
+const deleteBgBtn = document.getElementById('deleteBgBtn');
+
+const posXEl = document.getElementById('posX');
+const posXValueEl = document.getElementById('posXValue');
+const posYEl = document.getElementById('posY');
+const posYValueEl = document.getElementById('posYValue');
+
 // ---------- STATE ----------
 let lines = [];
 let activeIndex = -1;
 
 // Typewriter variables
 let typingTimer = null; // <-- THIS IS REQUIRED
-let TYPE_SPEED = 40; // ms per character, adjust as needed
+let TYPE_SPEED = 0; // ms per character, adjust as needed
 
 let isBold = false;
 let isItalic = false;
 let isUnderline = false;
+
+let popupWindow = null;
 // ---------- LOAD LINES ----------
 loadBtn.addEventListener('click', () => {
   lines = paragraphEl.value
@@ -69,21 +81,22 @@ function renderLines() {
 //   previewEl.innerText = lines[index];
 // }
 function selectLine(index) {
-  console.log('Selecting line:', index);
   if (index < 0 || index >= lines.length) return;
   activeIndex = index;
 
-  // Highlight active line
   document.querySelectorAll('.line').forEach((el, i) => {
     el.classList.toggle('active', i === index);
   });
+
   if (TYPE_SPEED <= 0) {
     previewEl.innerText = lines[index];
+    sendToPopup();
     return;
   }
-  // Start typewriter effect
+
   startTypewriter(lines[index]);
 }
+
 // function selectLine(index) {
 //   if (index < 0 || index >= lines.length) return;
 //   activeIndex = index;
@@ -122,6 +135,7 @@ function applyPreviewStyle() {
   previewEl.style.fontWeight = isBold ? 'bold' : 'normal';
   previewEl.style.fontStyle = isItalic ? 'italic' : 'normal';
   previewEl.style.textDecoration = isUnderline ? 'underline' : 'none';
+  sendToPopup();
 }
 
 // Live update
@@ -147,14 +161,23 @@ window.addEventListener('DOMContentLoaded', () => {
     bgColorEl.value = preset.bgColor;
     fontSizeValueEl.textContent = preset.fontSize;
 
-    if (preset.typeSpeed) {
+    // NEW
+    posXEl.value = preset.posX ?? 960;
+    posYEl.value = preset.posY ?? 540;
+    if (preset.typeSpeed !== undefined) {
       TYPE_SPEED = preset.typeSpeed;
       typeSpeedEl.value = TYPE_SPEED;
       speedValueEl.textContent = TYPE_SPEED;
     }
 
+    loadBgDropdown();
+    // select saved background
+    if (preset.bgImage) {
+      bgImageSelect.value = preset.bgImage;
+    }
     applyPreviewStyle();
     loadScriptDropdown();
+
     console.log('✅ Preset auto-loaded');
   } catch (err) {
     console.error('❌ Preset load failed', err);
@@ -167,7 +190,12 @@ savePresetBtn.addEventListener('click', () => {
     fontSize: fontSizeEl.value,
     fontColor: fontColorEl.value,
     bgColor: bgColorEl.value,
-    typeSpeed: parseInt(typeSpeedEl.value, 10)
+    typeSpeed: parseInt(typeSpeedEl.value, 10),
+
+    // NEW
+    bgImage: bgImageSelect.value || '',
+    posX: posXEl.value,
+    posY: posYEl.value
   };
 
   localStorage.setItem('previewPreset', JSON.stringify(preset));
@@ -224,6 +252,7 @@ function startTypewriter(text) {
       typingTimer = null;
       previewEl.innerText = chars.join('');
     }
+    sendToPopup();
   }, TYPE_SPEED);
 }
 
@@ -307,4 +336,94 @@ underlineBtn.addEventListener('click', () => {
   isUnderline = !isUnderline;
   underlineBtn.classList.toggle('active', isUnderline);
   applyPreviewStyle();
+});
+
+openPopupBtn.addEventListener('click', () => {
+  popupWindow = window.open('popup.html', 'OBSPreview', 'width=1920,height=1080');
+  // Send data after popup loads
+  setTimeout(sendToPopup, 300);
+});
+bgImageInput.addEventListener('change', () => {
+  const file = bgImageInput.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    const images = JSON.parse(localStorage.getItem('bgImages') || '[]');
+    images.push(reader.result);
+    localStorage.setItem('bgImages', JSON.stringify(images));
+    loadBgDropdown();
+  };
+  reader.readAsDataURL(file);
+});
+
+function loadBgDropdown() {
+  const images = JSON.parse(localStorage.getItem('bgImages') || '[]');
+  bgImageSelect.innerHTML = '<option value="">-- Saved Backgrounds --</option>';
+
+  images.forEach((img, i) => {
+    const opt = document.createElement('option');
+    opt.value = img;
+    opt.textContent = `Background ${i + 1}`;
+    bgImageSelect.appendChild(opt);
+  });
+}
+
+bgImageSelect.addEventListener('change', () => {
+  sendToPopup();
+});
+function sendToPopup() {
+  if (!popupWindow) return;
+  posXValueEl.textContent = posXEl.value;
+  posYValueEl.textContent = posYEl.value;
+  popupWindow.postMessage(
+    {
+      text: previewEl.innerText,
+      fontSize: fontSizeEl.value,
+      fontColor: fontColorEl.value,
+      // fontFamily: fontFamilyEl.value,
+      bold: isBold,
+      italic: isItalic,
+      underline: isUnderline,
+      bgImage: bgImageSelect.value || '',
+      x: posXEl.value,
+      y: posYEl.value
+    },
+    '*'
+  );
+}
+posXEl.addEventListener('input', sendToPopup);
+posYEl.addEventListener('input', sendToPopup);
+
+deleteBgBtn.addEventListener('click', () => {
+  const selectedBg = bgImageSelect.value;
+  if (!selectedBg) {
+    alert('Select a background to delete');
+    return;
+  }
+
+  if (!confirm('Delete selected background image?')) return;
+
+  let images = JSON.parse(localStorage.getItem('bgImages') || '[]');
+
+  // Remove selected image
+  images = images.filter((img) => img !== selectedBg);
+
+  localStorage.setItem('bgImages', JSON.stringify(images));
+
+  // Clear selection
+  bgImageSelect.value = '';
+  previewEl.style.backgroundImage = '';
+
+  // If preset used this background, clear it
+  const preset = JSON.parse(localStorage.getItem('previewPreset') || '{}');
+  if (preset.bgImage === selectedBg) {
+    preset.bgImage = '';
+    localStorage.setItem('previewPreset', JSON.stringify(preset));
+  }
+
+  loadBgDropdown();
+  sendToPopup();
+
+  console.log('🗑 Background deleted');
 });
